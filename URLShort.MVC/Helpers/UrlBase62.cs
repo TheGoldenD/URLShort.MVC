@@ -21,12 +21,5 @@ namespace URLShort.MVC.Helpers
 
             return sb.ToString();
         }
-
-        // Optional: Generate full short URL with request context
-        public static string GenerateShortLink(int id, HttpRequest request)
-        {
-            var code = Encode(id);
-            return $"{request.Scheme}://{request.Host}/u/{code}";
-        }
     }
 }

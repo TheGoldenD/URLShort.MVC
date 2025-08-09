@@ -34,10 +34,6 @@ namespace URLShort.MVC.Controllers
             _context.ShortUrls.Add(entry);
             await _context.SaveChangesAsync();
 
-            // Generate Base62 short code
-            var shortUrl = Base62.GenerateShortLink(entry.Id, Request);
-            ViewBag.ShortUrl = shortUrl;
-
             return View("Index");
         }
 
