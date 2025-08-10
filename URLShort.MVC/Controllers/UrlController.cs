@@ -20,6 +20,12 @@ namespace URLShort.MVC.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Revoke()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Shorten(string url)
         {

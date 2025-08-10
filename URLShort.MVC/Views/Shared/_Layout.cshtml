@@ -3,47 +3,166 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - URLShort.MVC</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/URLShort.MVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-dark topbar">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">URLShort.MVC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+                <!-- Nút 3 gạch -->
+                <span class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></span>
+              
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    <!-- Sidebar menu -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Options</span>
+            <a href="javascript:void(0)" class="closebtn" id="close-btn">&times;</a>
+        </div>
+        <a asp-area="" asp-controller="Url" asp-action="Index"><i class="fa-solid fa-scissors"></i> URL Shorten</a>
+        <a asp-area="" asp-controller="Url" asp-action="Revoke"><i class="fa-solid fa-trash"></i>URL Revoke</a>
+    </div>
+
+    <div class="container" id="main">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
+    <!--Footer-->
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - URLShort.MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - URLShort.MVC</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        document.getElementById("menu-toggle").onclick = function () {
+            document.getElementById("sidebar").style.width = "250px";
+            // Không thay đổi margin-left của main nữa
+        }
+
+        document.getElementById("close-btn").onclick = function () {
+            document.getElementById("sidebar").style.width = "0";
+            // Không thay đổi margin-left của main nữa
+        }
+
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- CSS -->
+    <style>
+        /* Body background */
+        body {
+            background: url('/images/xanh.gif') center center fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0;
+        }
+
+        /* Thanh top */
+        .topbar {
+            background-color: rgba(107, 120, 115, 0.9);
+            color: white;
+            padding: 10px;
+        }
+
+        .topbar-title {
+            margin-left: 10px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .navbar {
+            background-color: darkslategray;
+        }
+
+        .navbar a {
+                color: white; 
+        }
+
+        .menu-toggle {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1050; /* tăng z-index lên */
+            top: 0;
+            left: 0;
+            background-color: darkslategray;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+        }
+
+
+        /* Sidebar header chứa MVC + nút X */
+        .sidebar-header {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Sidebar links */
+        .sidebar a {
+            padding: 12px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            transition: 0.2s;
+        }
+
+            .sidebar a:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+
+        /* Close button */
+        .sidebar .closebtn {
+            font-size: 28px;
+            color: white;
+            display: inline-block;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        /* Icon spacing */
+        .sidebar i {
+            margin-right: 10px;
+        }
+
+        footer {
+            text-align: center;
+        }
+
+
+    </style>
 </body>
 </html>
