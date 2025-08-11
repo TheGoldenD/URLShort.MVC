@@ -12,23 +12,20 @@
 <body>
     <header>
         <nav class="navbar navbar-dark topbar">
-            <div class="container-fluid">
-                <!-- Nút 3 gạch -->
-                <span class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></span>
-              
+            <div class="container-fluid d-flex justify-content-center">
+                <div class="nav-links d-flex gap-5">
+                    <a asp-area="" asp-controller="Url" asp-action="Index"
+                       class="nav-link @(ViewData["Title"]?.ToString() == "URL Shortener" ? "active" : "")">
+                        <i class="fa-solid fa-scissors"></i> URL Shorten
+                    </a>
+                    <a asp-area="" asp-controller="Url" asp-action="Revoke"
+                       class="nav-link @(ViewData["Title"]?.ToString() == "URL Revoke" ? "active" : "")">
+                        <i class="fa-solid fa-trash"></i> URL Revoke
+                    </a>
+                </div>
             </div>
         </nav>
     </header>
-
-    <!-- Sidebar menu -->
-    <div id="sidebar" class="sidebar">
-        <div class="sidebar-header">
-            <span class="sidebar-title">Options</span>
-            <a href="javascript:void(0)" class="closebtn" id="close-btn">&times;</a>
-        </div>
-        <a asp-area="" asp-controller="Url" asp-action="Index"><i class="fa-solid fa-scissors"></i> URL Shorten</a>
-        <a asp-area="" asp-controller="Url" asp-action="Revoke"><i class="fa-solid fa-trash"></i>URL Revoke</a>
-    </div>
 
     <div class="container" id="main">
         <main role="main" class="pb-3">
@@ -38,27 +35,14 @@
 
     <!--Footer-->
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - URLShort.MVC</a>
+        <div class="container text-center">
+            &copy; 2025 - URLShort.MVC
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
-    <script>
-        document.getElementById("menu-toggle").onclick = function () {
-            document.getElementById("sidebar").style.width = "250px";
-            // Không thay đổi margin-left của main nữa
-        }
-
-        document.getElementById("close-btn").onclick = function () {
-            document.getElementById("sidebar").style.width = "0";
-            // Không thay đổi margin-left của main nữa
-        }
-
-    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 
@@ -75,94 +59,36 @@
         /* Thanh top */
         .topbar {
             background-color: rgba(107, 120, 115, 0.9);
-            color: white;
             padding: 10px;
         }
 
-        .topbar-title {
-            margin-left: 10px;
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-        .navbar {
-            background-color: darkslategray;
-        }
-
-        .navbar a {
-                color: white; 
-        }
-
-        .menu-toggle {
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1050; /* tăng z-index lên */
-            top: 0;
-            left: 0;
-            background-color: darkslategray;
-            overflow-x: hidden;
-            transition: 0.3s;
-            padding-top: 60px;
-        }
-
-
-        /* Sidebar header chứa MVC + nút X */
-        .sidebar-header {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            right: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-title {
-            font-size: 20px;
+        /* Link trong navbar */
+        .nav-links .nav-link {
             color: white;
-            font-weight: bold;
-        }
-
-        /* Sidebar links */
-        .sidebar a {
-            padding: 12px 20px;
+            font-size: 18px;
+            padding: 8px 12px;
+            position: relative;
             text-decoration: none;
-            font-size: 18px;
-            color: white;
-            display: block;
-            transition: 0.2s;
         }
 
-            .sidebar a:hover {
-                background-color: rgba(255, 255, 255, 0.2);
+            .nav-links .nav-link:hover {
+                color: white;
             }
 
-        /* Close button */
-        .sidebar .closebtn {
-            font-size: 28px;
-            color: white;
-            display: inline-block;
-            line-height: 1;
-            text-decoration: none;
-        }
-
-        /* Icon spacing */
-        .sidebar i {
-            margin-right: 10px;
-        }
+            /* Active underline */
+            .nav-links .nav-link.active::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 3px;
+                width: 100%;
+                background-color: white;
+            }
 
         footer {
             text-align: center;
         }
-
-
     </style>
 </body>
 </html>
