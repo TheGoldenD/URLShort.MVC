@@ -17,5 +17,9 @@ public class UrlDBContext(DbContextOptions<UrlDBContext> options) : DbContext(op
         modelBuilder.Entity<ShortUrl>()
             .Property(s => s.OriginalUrl)
             .IsRequired();
+
+        modelBuilder.Entity<ShortUrl>()
+            .Property(s => s.RevokePassword)
+            .IsRequired();
     }
 }

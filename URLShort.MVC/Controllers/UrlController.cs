@@ -2,6 +2,9 @@
 using URLShort.MVC.Data;
 using URLShort.MVC.Models;
 using URLShort.MVC.Helpers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 
 namespace URLShort.MVC.Controllers
 {
@@ -15,7 +18,7 @@ namespace URLShort.MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Shorten()
         {
             return View();
         }
@@ -29,32 +32,71 @@ namespace URLShort.MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Shorten(string url)
         {
-            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            if (string.IsNullOrWhiteSpace(url))
             {
-                ModelState.AddModelError("", "Invalid URL format.");
-                return View("Index");
+                ModelState.AddModelError("", "URL is required.");
+                return View("Shorten");
             }
 
             // Store URL in DB
-            var entry = new ShortUrl { OriginalUrl = url };
+            var entry = new ShortUrl { OriginalUrl = url, CreatedAt = DateTime.UtcNow };
             _context.ShortUrls.Add(entry);
             await _context.SaveChangesAsync();
 
-            return View("Index");
+            entry.ShortCode = EncodeUrl.Encode(entry.Id); 
+            await _context.SaveChangesAsync();
+
+            entry.RevokePassword = EncodeUrl.GenerateRevokePassword(8);
+            await _context.SaveChangesAsync();
+
+            var shortUrl = $"{Request.Scheme}://{Request.Host}/{entry.ShortCode}";
+            ViewBag.ShortUrl = shortUrl; 
+            ViewBag.RevokePassword = entry.RevokePassword;
+
+            return View("Shorten");
         }
 
-        [HttpGet("/u/{code}")]
-        public async Task<IActionResult> RedirectToOriginal(string code)
+        [HttpPost]
+        public async Task<IActionResult> Revoke(string shortenedUrl, string revokePassword)
+        {
+            if (string.IsNullOrWhiteSpace(shortenedUrl) || string.IsNullOrWhiteSpace(revokePassword))
+            {
+                ModelState.AddModelError("", "Both URL and revoke password are required.");
+                return View("Revoke");
+            }
+
+            const string baseUrl = "http://localhost:5050/";
+            string shortCodeToCheck = shortenedUrl.Split(baseUrl).Last().TrimEnd('/');
+            var entry = await _context.ShortUrls
+                .FirstOrDefaultAsync(s => s.ShortCode == shortCodeToCheck && s.RevokePassword == revokePassword);
+
+            if (entry == null)
+            {
+                ModelState.AddModelError("", "No matching URL and revoke password found.");
+                return View("Revoke");
+            }
+
+            _context.ShortUrls.Remove(entry);
+            await _context.SaveChangesAsync();
+
+            ViewBag.Message = "URL successfully revoked and deleted.";
+            return View("Revoke");
+        }
+
+        [HttpGet("/{shortCode}")]
+        public async Task<IActionResult> RedirectToOriginal(string shortCode)
         {
             try
             {
-                var id = DecodeBase62(code);
-                var entry = await _context.ShortUrls.FindAsync(id);
+                var originalUrl = await _context.ShortUrls
+                         .Where(s => s.ShortCode == shortCode)
+                         .Select(s => s.OriginalUrl)
+                         .FirstOrDefaultAsync();
 
-                if (entry == null)
+                if (originalUrl.IsNullOrEmpty()) 
                     return NotFound();
 
-                return Redirect(entry.OriginalUrl);
+                return Redirect(originalUrl);
             }
             catch
             {
@@ -62,18 +104,5 @@ namespace URLShort.MVC.Controllers
             }
         }
 
-        // Helper to decode Base62 string to int (reversed logic)
-        private int DecodeBase62(string code)
-        {
-            const string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            int result = 0;
-
-            foreach (char c in code)
-            {
-                result = result * 62 + chars.IndexOf(c);
-            }
-
-            return result;
-        }
     }
 }

@@ -12,8 +12,8 @@ using URLShort.MVC.Data;
 namespace URLShort.MVC.Migrations
 {
     [DbContext(typeof(UrlDBContext))]
-    [Migration("20250809054530_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250811071430_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,14 +40,19 @@ namespace URLShort.MVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShortCode")
+                    b.Property<string>("RevokePassword")
                         .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("ShortCode")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ShortCode")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[ShortCode] IS NOT NULL");
 
                     b.ToTable("ShortUrls");
                 });
