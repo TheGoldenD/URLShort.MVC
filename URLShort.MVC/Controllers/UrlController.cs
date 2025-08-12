@@ -65,7 +65,7 @@ namespace URLShort.MVC.Controllers
                 return View("Revoke");
             }
 
-            const string baseUrl = "http://localhost:5050/";
+            var baseUrl = $"{Request.Scheme}://{Request.Host}/";
             string shortCodeToCheck = shortenedUrl.Split(baseUrl).Last().TrimEnd('/');
             var entry = await _context.ShortUrls
                 .FirstOrDefaultAsync(s => s.ShortCode == shortCodeToCheck && s.RevokePassword == revokePassword);
