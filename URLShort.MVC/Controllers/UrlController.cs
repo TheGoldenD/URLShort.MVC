@@ -4,7 +4,6 @@ using URLShort.MVC.Models;
 using URLShort.MVC.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics;
 
 namespace URLShort.MVC.Controllers
 {
@@ -96,7 +95,8 @@ namespace URLShort.MVC.Controllers
                 if (originalUrl.IsNullOrEmpty()) 
                     return NotFound();
 
-                return Redirect(originalUrl);
+                var encodedUrl = System.Uri.EscapeUriString(originalUrl);
+                return Redirect(encodedUrl);
             }
             catch
             {
