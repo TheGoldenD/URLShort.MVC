@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace URLShort.MVC.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,8 @@ namespace URLShort.MVC.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OriginalUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ShortCode = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ShortCode = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    RevokePassword = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -30,7 +31,8 @@ namespace URLShort.MVC.Migrations
                 name: "IX_ShortUrls_ShortCode",
                 table: "ShortUrls",
                 column: "ShortCode",
-                unique: true);
+                unique: true,
+                filter: "[ShortCode] IS NOT NULL");
         }
 
         /// <inheritdoc />

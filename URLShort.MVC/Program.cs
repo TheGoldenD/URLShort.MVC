@@ -32,6 +32,6 @@ app.UseAuthorization();
 // Route config
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Url}/{action=Index}/{id?}");
+    pattern: "{controller=Url}/{action=Shorten}/{id?}");
 
 app.Run();

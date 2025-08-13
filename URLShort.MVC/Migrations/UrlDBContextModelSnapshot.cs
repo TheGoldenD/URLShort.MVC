@@ -37,14 +37,19 @@ namespace URLShort.MVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ShortCode")
+                    b.Property<string>("RevokePassword")
                         .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("ShortCode")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ShortCode")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[ShortCode] IS NOT NULL");
 
                     b.ToTable("ShortUrls");
                 });
