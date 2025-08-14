@@ -14,7 +14,7 @@ namespace URLShort.MVC.Helpers
             var qrGenerator = new QRCodeGenerator();
             var qrCodeData = qrGenerator.CreateQrCode(shortenedUrl, QRCodeGenerator.ECCLevel.Q);
             var qrCode = new QRCode(qrCodeData);
-            using var qrCodeImage = qrCode.GetGraphic(10);
+            using var qrCodeImage = qrCode.GetGraphic(8);
 
             // Convert to Base64 string
             using var ms = new MemoryStream();

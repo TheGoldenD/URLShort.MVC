@@ -44,20 +44,24 @@ namespace URLShort.MVC.Controllers
             }
 
             // Store URL in DB
-            var entry = new ShortUrl { OriginalUrl = url, CreatedAt = DateTime.UtcNow };
+            var entry = new ShortUrl
+            {
+                OriginalUrl = url,
+                CreatedAt = DateTime.UtcNow
+            };
             _context.ShortUrls.Add(entry);
             await _context.SaveChangesAsync();
 
             entry.ShortCode = EncodeUrl.Encode(entry.Id);
-            await _context.SaveChangesAsync();
-
             entry.RevokePassword = EncodeUrl.GenerateRevokePassword(8);
+
+            _context.Entry(entry).Property(e => e.ShortCode).IsModified = true;
+            _context.Entry(entry).Property(e => e.RevokePassword).IsModified = true;
             await _context.SaveChangesAsync();
 
             var shortUrl = $"{Request.Scheme}://{Request.Host}/{entry.ShortCode}";
-            ViewBag.ShortUrl = shortUrl; 
+            ViewBag.ShortUrl = shortUrl;
             ViewBag.RevokePassword = entry.RevokePassword;
-
             var qrCodeImage = GenerateQR.FromUrl(shortUrl);
             ViewBag.QRCodeImage = qrCodeImage;
 
