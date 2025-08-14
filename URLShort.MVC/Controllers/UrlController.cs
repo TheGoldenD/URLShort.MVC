@@ -1,9 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using URLShort.MVC.Data;
-using URLShort.MVC.Models;
-using URLShort.MVC.Helpers;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Xml.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using QRCoder;
+using URLShort.MVC.Data;
+using URLShort.MVC.Helpers;
+using URLShort.MVC.Models;
+
 
 namespace URLShort.MVC.Controllers
 {
@@ -42,7 +48,7 @@ namespace URLShort.MVC.Controllers
             _context.ShortUrls.Add(entry);
             await _context.SaveChangesAsync();
 
-            entry.ShortCode = EncodeUrl.Encode(entry.Id); 
+            entry.ShortCode = EncodeUrl.Encode(entry.Id);
             await _context.SaveChangesAsync();
 
             entry.RevokePassword = EncodeUrl.GenerateRevokePassword(8);
@@ -51,6 +57,9 @@ namespace URLShort.MVC.Controllers
             var shortUrl = $"{Request.Scheme}://{Request.Host}/{entry.ShortCode}";
             ViewBag.ShortUrl = shortUrl; 
             ViewBag.RevokePassword = entry.RevokePassword;
+
+            var qrCodeImage = GenerateQR.FromUrl(shortUrl);
+            ViewBag.QRCodeImage = qrCodeImage;
 
             return View("Shorten");
         }
@@ -69,7 +78,7 @@ namespace URLShort.MVC.Controllers
             var entry = await _context.ShortUrls
                 .FirstOrDefaultAsync(s => s.ShortCode == shortCodeToCheck && s.RevokePassword == revokePassword);
 
-            if (entry == null)
+            if (entry == null || entry.ShortCode != shortCodeToCheck)
             {
                 ModelState.AddModelError("", "No matching URL and revoke password found.");
                 return View("Revoke");
@@ -94,7 +103,6 @@ namespace URLShort.MVC.Controllers
 
                 if (originalUrl.IsNullOrEmpty()) 
                     return NotFound();
-
                 var encodedUrl = System.Uri.EscapeUriString(originalUrl);
                 return Redirect(encodedUrl);
             }
@@ -103,6 +111,5 @@ namespace URLShort.MVC.Controllers
                 return BadRequest("Invalid code.");
             }
         }
-
     }
 }
