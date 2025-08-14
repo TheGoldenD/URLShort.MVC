@@ -49,8 +49,6 @@ namespace URLShort.MVC.Controllers
             await _context.SaveChangesAsync();
 
             entry.ShortCode = EncodeUrl.Encode(entry.Id);
-            await _context.SaveChangesAsync();
-
             entry.RevokePassword = EncodeUrl.GenerateRevokePassword(8);
             await _context.SaveChangesAsync();
 
