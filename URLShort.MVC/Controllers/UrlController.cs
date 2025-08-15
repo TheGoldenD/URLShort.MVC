@@ -48,7 +48,7 @@ namespace URLShort.MVC.Controllers
                 (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
             {
                 ModelState.AddModelError("", "Please enter a valid URL");
-                return View("Shorten")
+                return View("Shorten");
             }
 
             // Store URL in DB
