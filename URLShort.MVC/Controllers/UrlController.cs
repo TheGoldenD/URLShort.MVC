@@ -43,6 +43,14 @@ namespace URLShort.MVC.Controllers
                 return View("Shorten");
             }
 
+            // Validate URL format
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uriResult) ||
+                (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps))
+            {
+                ModelState.AddModelError("", "Please enter a valid URL");
+                return View("Shorten");
+            }
+
             // Store URL in DB
             var entry = new ShortUrl { OriginalUrl = url, CreatedAt = DateTime.UtcNow };
             _context.ShortUrls.Add(entry);
